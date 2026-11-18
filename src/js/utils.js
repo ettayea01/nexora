@@ -1,0 +1,22 @@
+// Pure helpers — also unit-tested in Node (no DOM access at import time)
+export const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+export const fmtDate=(ts,opts)=>new Date(ts).toLocaleDateString(undefined,opts||{year:'numeric',month:'short',day:'numeric'});
+export const fmtTime=ts=>new Date(ts).toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'});
+export const todayKey=(d=new Date())=>d.toISOString().slice(0,10);
+export const isToday=ts=>todayKey(new Date(ts))===todayKey();
+export const fmtBytes=n=>{if(!n&&n!==0)return'0 B';const u=['B','KB','MB','GB'];let i=0;while(n>=1024&&i<3){n/=1024;i++}return n.toFixed(i?1:0)+' '+u[i]};
+export const fmtMoney=(n,cur='$')=>cur+Number(n||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+export function productivityScore({tasksDoneToday=0,tasksTotalToday=0,focusMin=0,focusGoalMin=60}={}){const t=tasksTotalToday?tasksDoneToday/tasksTotalToday:0;const f=focusGoalMin?Math.min(1,focusMin/focusGoalMin):0;return Math.round((t*0.6+f*0.4)*100)}
+export function b64encode(s){return btoa(unescape(encodeURIComponent(s)))}
+export function b64decode(s){return decodeURIComponent(escape(atob(s.trim())))}
+export const caseConvert=(s,mode)=>{switch(mode){case'upper':return s.toUpperCase();case'lower':return s.toLowerCase();case'title':return s.replace(/\w\S*/g,w=>w[0].toUpperCase()+w.slice(1).toLowerCase());case'camel':return s.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g,(_,c)=>c.toUpperCase());case'snake':return s.trim().toLowerCase().replace(/[^a-z0-9]+/g,'_');case'kebab':return s.trim().toLowerCase().replace(/[^a-z0-9]+/g,'-');default:return s}};
+export function convertUnit(v,from,to){const L={m:1,km:1000,cm:0.01,mi:1609.344,ft:0.3048};const W={kg:1,g:0.001,lb:0.453592,t:1000};const D={b:1,kb:1024,mb:1024**2,gb:1024**3};if(from in L&&to in L)return v*L[from]/L[to];if(from in W&&to in W)return v*W[from]/W[to];if(from in D&&to in D)return v*D[from]/D[to];if(from==='c'&&to==='f')return v*9/5+32;if(from==='f'&&to==='c')return (v-32)*5/9;if(from==='c'&&to==='k')return v+273.15;if(from==='k'&&to==='c')return v-273.15;if(from==='f'&&to==='k')return (v-32)*5/9+273.15;if(from==='k'&&to==='f')return (v-273.15)*9/5+32;throw new Error('Incompatible units')}
+export function hexToRgb(hex){hex=hex.replace('#','');if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');const n=parseInt(hex,16);return{r:(n>>16)&255,g:(n>>8)&255,b:n&255}}
+export function rgbToHex(r,g,b){return '#'+[r,g,b].map(v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0')).join('')}
+export function rgbToHsl(r,g,b){r/=255;g/=255;b/=255;const mx=Math.max(r,g,b),mn=Math.min(r,g,b);let h=0,s=0;const l=(mx+mn)/2;if(mx!==mn){const d=mx-mn;s=l>0.5?d/(2-mx-mn):d/(mx+mn);switch(mx){case r:h=(g-b)/d+(g<b?6:0);break;case g:h=(b-r)/d+2;break;default:h=(r-g)/d+4}h*=60}return{h:Math.round(h),s:Math.round(s*100),l:Math.round(l*100)}}
+export function stripHtml(html){const d=document.createElement('div');d.innerHTML=html||'';return d.textContent||''}
+export function wordCount(text){const t=(text||'').trim();return t?t.split(/\s+/).length:0}
+// Minimal safe Markdown: raw HTML is escaped FIRST, then markdown applied.
+export function renderMarkdown(md){let h=esc(md||'');h=h.replace(/```([\s\S]*?)```/g,(_,c)=>'<pre><code>'+c.trim()+'</code></pre>');h=h.replace(/`([^`]+)`/g,'<code>$1</code>');h=h.replace(/^### (.*)$/gm,'<h3>$1</h3>');h=h.replace(/^## (.*)$/gm,'<h2>$1</h2>');h=h.replace(/^# (.*)$/gm,'<h1>$1</h1>');h=h.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');h=h.replace(/\*([^*]+)\*/g,'<em>$1</em>');h=h.replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');h=h.replace(/^- \[x\] (.*)$/gm,'<div>☑ $1</div>');h=h.replace(/^- \[ \] (.*)$/gm,'<div>☐ $1</div>');h=h.replace(/^- (.*)$/gm,'<li>$1</li>');h=h.replace(/^(\d+)\. (.*)$/gm,'<li>$2</li>');h=h.split(/\n{2,}/).map(b=>/^<(h\d|pre|li|div)/.test(b.trim())?b:'<p>'+b.replace(/\n/g,'<br>')+'</p>').join('\n');return h}
+export function download(name,content,type='text/plain'){const b=content instanceof Blob?content:new Blob([content],{type});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)}
+export async function sha256Hex(text){const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(text));return[...new Uint8Array(buf)].map(x=>x.toString(16).padStart(2,'0')).join('')}

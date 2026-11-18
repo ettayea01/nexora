@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>NEXORA — Personal Productivity Ecosystem</title>
+<meta name="theme-color" content="#09090F"><meta name="description" content="Premium offline-first personal productivity ecosystem">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="src/styles/main.css">
+</head>
+<body>
+<div id="lockOverlay" class="lock-overlay hidden"><div class="lock-box"><h1>NEXORA</h1><p>Enter your PIN to unlock</p><input id="lockPin" type="password" inputmode="numeric" placeholder="PIN"><button id="lockBtn" class="btn primary">Unlock</button><p id="lockErr" class="err"></p></div></div>
+<div id="app" class="app">
+  <aside id="sidebar" class="sidebar">
+    <div class="brand"><span class="brand-mark">N</span><span class="brand-name">NEXORA</span></div>
+    <nav id="mainNav" class="nav"></nav>
+    <div class="side-foot"><span id="netDot" class="dot online"></span><span id="netText">Online</span></div>
+  </aside>
+  <div class="main-wrap">
+    <header class="topbar">
+      <button id="menuBtn" class="icon-btn" aria-label="Menu">☰</button>
+      <div class="search-box"><input id="globalSearch" type="search" placeholder="Search… (Ctrl+K)"></div>
+      <span id="netBadge" class="badge">Online</span>
+      <button id="installBtn" class="btn primary hidden">Install App</button>
+      <button id="themeBtn" class="icon-btn" aria-label="Theme">◐</button>
+      <div id="avatar" class="avatar">N</div>
+    </header>
+    <main id="view" class="view"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></main>
+  </div>
+  <nav id="bottomNav" class="bottom-nav"></nav>
+</div>
+<div id="palette" class="palette hidden"><div class="palette-box"><input id="paletteInput" placeholder="Type a command or search…"><div id="paletteResults"></div></div></div>
+<div id="modalRoot"></div>
+<div id="toasts" class="toasts"></div>
+<script src="src/js/vendor/qrcode.min.js"></script>
+<script src="src/js/vendor/pdf.min.js"></script>
+<script type="module" src="src/js/app.js"></script>
+</body></html>

@@ -1,0 +1,6 @@
+const dict={
+en:{overview:'Overview',notes:'Notes',tasks:'Tasks',calendar:'Calendar',library:'Library',focus:'Focus',finance:'Finance',toolbox:'Toolbox',files:'Files',settings:'Settings',dashboard:'Dashboard',search:'Search',newNote:'New Note',newTask:'New Task',save:'Save',cancel:'Cancel',delete:'Delete'},
+fr:{overview:'Aperçu',notes:'Notes',tasks:'Tâches',calendar:'Calendrier',library:'Bibliothèque',focus:'Concentration',finance:'Finances',toolbox:'Outils',files:'Fichiers',settings:'Paramètres',dashboard:'Tableau de bord',search:'Rechercher',newNote:'Nouvelle note',newTask:'Nouvelle tâche',save:'Enregistrer',cancel:'Annuler',delete:'Supprimer'},
+ar:{overview:'نظرة عامة',notes:'الملاحظات',tasks:'المهام',calendar:'التقويم',library:'المكتبة',focus:'التركيز',finance:'المالية',toolbox:'الأدوات',files:'الملفات',settings:'الإعدادات',dashboard:'لوحة التحكم',search:'بحث',newNote:'ملاحظة جديدة',newTask:'مهمة جديدة',save:'حفظ',cancel:'إلغاء',delete:'حذف'}};
+let lang='en';export function setLang(l){lang=dict[l]?l:'en';document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr'}
+export function getLang(){return lang} export function t(k){return (dict[lang]&&dict[lang][k])||dict.en[k]||k}
